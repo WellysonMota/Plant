@@ -1,0 +1,65 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f9f4;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+h1,h3 {
+    color: #2f855a;
+    margin-bottom: 30px;
+}
+
+.cards {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: #e6fffa;
+    padding: 20px;
+    border-radius: 10px;
+    width: 28%;
+    margin: 10px;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #2c7a7b;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+button {
+    padding: 12px 24px;
+    background-color: #38a169;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-bottom: 30px;
+}
+
+button:hover {
+    background-color: #2f855a;
+}
+
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+
+.maps{
+    border-radius: 8px;
+}

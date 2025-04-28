@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Mapa Google</title>
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌎 Localização do Sensor</h1>
+    <div id="map"></div>
+
+    <script>
+      function initMap() {
+        var localizacao = { lat: -23.5505, lng: -46.6333 }; // Exemplo: São Paulo
+        var mapa = new google.maps.Map(document.getElementById('map'), {
+          zoom: 14,
+          center: localizacao
+        });
+        var marcador = new google.maps.Marker({
+          position: localizacao,
+          map: mapa
+        });
+      }
+    </script>
+
+    <script async
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnk_ICm07H_LSveWC_wzzJrVI4AhKd2ik&callback=initMap">
+    </script>
+</body>
+</html>

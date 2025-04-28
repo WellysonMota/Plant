@@ -1,0 +1,99 @@
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <DHT.h>
+
+WiFiClient client;
+
+// === CONFIGURAÇÃO DOS PINOS ===
+#define DHTPIN 4        // GPIO4 = D2
+#define DHTTYPE DHT22
+#define RELE_PIN D0     // GPIO16 = controle da bomba
+#define SOLO_ANALOG A0  // pino analógico do sensor de solo
+
+DHT dht(DHTPIN, DHTTYPE);
+
+// === CONFIGURAÇÃO DA REDE ===
+const char* ssid = "Clicknet_Casa Net";
+const char* password = "motta1993";
+const char* serverName = "http://192.168.1.80:8000/api/sensors/";
+
+// === LIMIAR PARA ACIONAR A BOMBA ===
+#define SOLO_LIMIAR 40.0
+
+void setup() {
+  Serial.begin(9600);
+  delay(1000);
+  dht.begin();
+
+  pinMode(RELE_PIN, OUTPUT);
+  digitalWrite(RELE_PIN, HIGH);  // começa desligado
+
+  // Conectar ao WiFi
+  WiFi.begin(ssid, password);
+  Serial.print("Conectando ao WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+  Serial.println("\n✅ Conectado ao WiFi");
+  Serial.print("📡 IP: ");
+  Serial.println(WiFi.localIP());
+}
+
+void loop() {
+  float humidity = dht.readHumidity();
+  float temperature = dht.readTemperature();
+
+  // === Leitura real do sensor de solo ===
+  int rawSoil = analogRead(SOLO_ANALOG);  // 0 a 1023
+  float soil_moisture = map(rawSoil, 1023, 300, 0, 100);  // calibrável
+
+  if (isnan(humidity) || isnan(temperature)) {
+    Serial.println("❌ Erro na leitura do DHT22!");
+    delay(60000);
+    return;
+  }
+
+  // === Lógica de irrigação ===
+  if (soil_moisture < SOLO_LIMIAR) {
+    Serial.println("⚠️ Solo seco → Ligando bomba!");
+    digitalWrite(RELE_PIN, LOW);
+  } else {
+    Serial.println("✅ Solo úmido → Desligando bomba.");
+    digitalWrite(RELE_PIN, HIGH);
+  }
+
+  // === Envio dos dados via HTTP ===
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(client, serverName);
+    http.addHeader("Content-Type", "application/json");
+
+    String jsonPayload = 
+      "{\"temperature\": " + String(temperature, 2) + 
+      ", \"humidity\": " + String(humidity, 2) + 
+      ", \"soil_moisture\": " + String(soil_moisture, 2) + "}";
+
+    int httpResponseCode = http.POST(jsonPayload);
+
+    Serial.print("📤 Enviando: ");
+    Serial.println(jsonPayload);
+    Serial.print("=============================================");
+
+
+    if (httpResponseCode > 0) {
+      String response = http.getString();
+      Serial.print("✅ Resposta: ");
+      Serial.println(response);
+    } else {
+      Serial.print("❌ Erro HTTP: ");
+      Serial.println(httpResponseCode);
+    }
+
+    http.end();
+  } else {
+    Serial.println("⚠️ Wi-Fi desconectado.");
+  }
+
+  delay(10000);  // 1 minuto
+}

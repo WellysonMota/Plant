@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Plant Monitor Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌿 Monitoramento de Umidade</h1>
+        <h3>📖 Projeto Integrador PI V - Univesp</h3>
+        <div class="cards">
+            <div class="card" id="tempCard">🌡️ Temperatura: <span>-- °C</span></div>
+            <div class="card" id="humidityCard">💧 Umidade do Ar: <span>-- %</span></div>
+            <div class="card" id="soilCard">🌱 Umidade do Solo: <span>-- %</span></div>
+            <div class="card" id="relayCard">
+                💦 Irrigação Ativada: <span id="relayStatus">--</span><br/>
+                <br>
+                <button onclick="toggleRelay(true)">Ativar</button>
+                <button onclick="toggleRelay(false)">Desativar</button>
+            </div>  
+        </div>
+        <button id="refreshBtn">🔄 Atualizar Dados</button>
+        <canvas id="sensorChart"></canvas>
+        <div>
+            <h1>🌎 Localização do Sensor</h1>
+            <div class="cards">
+                <div class="card" id="tempCard"> Sensor: No 04301 - Modelo: DHT22 </div> <span></span></div>
+    
+    
+            <div id="map" class="maps"></div>
+        
+            <script>
+              function initMap() {
+                var localizacao = { lat: -22.742013837359625, lng: -47.16302850628346}; //Localidade Real
+                //-22.742013837359625, -47.16302850628346
+                var mapa = new google.maps.Map(document.getElementById('map'), {
+                  zoom: 14,
+                  center: localizacao
+                });
+                var marcador = new google.maps.Marker({
+                  position: localizacao,
+                  map: mapa
+                });
+              }
+            </script>
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnk_ICm07H_LSveWC_wzzJrVI4AhKd2ik&callback=initMap">
+    </script>
+</body>
+</html>
